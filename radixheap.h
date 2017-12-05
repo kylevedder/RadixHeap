@@ -4,39 +4,39 @@
 //#define RADIXHEAP_DEBUG
 namespace datastructures {
 class RadixHeapNode {
-  public:    
-    int item, key;
-    int bucket;
-    RadixHeapNode *next, *prev;
+ public:
+  int item, key;
+  int bucket;
+  RadixHeapNode *next, *prev;
 };
 
 class RadixHeap {
-  public:
+ public:
   RadixHeap(int n, int MaxKey);
-    ~RadixHeap();
-    
-    int deleteMin();
-    void insert(int item, long k);
-    void decreaseKey(int item, long newValue);
-    int nItems() const { return itemCount; }
+  ~RadixHeap();
 
-    long nComps() const { return compCount; }
-    void dump() const;
+  int deleteMin();
+  void insert(int item, long k);
+  void decreaseKey(int item, long newValue);
+  int nItems() const { return itemCount; }
 
-  private:
-    void placeNode(int startBucket, RadixHeapNode *node);
-    void insertNode(int i, RadixHeapNode *node);
-    void removeNode(RadixHeapNode *node);
+  long nComps() const { return compCount; }
+  void dump() const;
 
-    RadixHeapNode **nodes;
-    RadixHeapNode *bucketHeaders;
-    int *u;
+ private:
+  void placeNode(int startBucket, RadixHeapNode *node);
+  void insertNode(int i, RadixHeapNode *node);
+  void removeNode(RadixHeapNode *node);
 
-    int nBuckets;
-    int dMin;
+  RadixHeapNode **nodes;
+  RadixHeapNode *bucketHeaders;
+  int *u;
 
-    int itemCount;
-    int compCount;
+  int nBuckets;
+  int dMin;
+
+  int itemCount;
+  int compCount;
 };
 }  // namespace datastructures
 #endif
