@@ -5,3 +5,6 @@ heaptest: heaptest.cc radixheap.cc
 
 clean:
 	rm heaptest
+
+valgrind: heaptest
+	valgrind --error-exitcode=1 --track-origins=yes --soname-synonyms='somalloc=*tcmalloc*' --leak-check=full ./heaptest
