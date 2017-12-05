@@ -21,9 +21,13 @@
 
 //#define RADIXHEAP_DEBUG
 namespace datastructures {
+namespace radix {
+
+namespace heap {
 class RadixHeapNode {
  public:
-  int item, key;
+  int item;
+  int64_t key;
   int bucket;
   RadixHeapNode *next, *prev;
 };
@@ -34,11 +38,11 @@ class RadixHeap {
   ~RadixHeap();
 
   int deleteMin();
-  void insert(int item, long k);
-  void decreaseKey(int item, long newValue);
+  void insert(int item, int64_t k);
+  void decreaseKey(int item, int64_t newValue);
   int nItems() const { return itemCount; }
 
-  long nComps() const { return compCount; }
+  int64_t nComps() const { return compCount; }
   void dump() const;
 
  private:
@@ -56,5 +60,7 @@ class RadixHeap {
   int itemCount;
   int compCount;
 };
+}  // namespace heap
+}  // namespace radix
 }  // namespace datastructures
 #endif  // RADIXHEAP_H

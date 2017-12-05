@@ -1,3 +1,20 @@
+// Copyright 2017 Shane Saunders (???), and Kyle Vedder (kvedder@umass.edu)
+// College of Information and Computer Sciences,
+// University of Massachusetts Amherst
+//
+// This software is free: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License Version 3,
+// as published by the Free Software Foundation.
+//
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// Version 3 in the file COPYING that came with this distribution.
+// If not, see <http://www.gnu.org/licenses/>.
+// ========================================================================
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>
@@ -5,6 +22,8 @@
 #include "radixheap.h"
 
 namespace datastructures {
+namespace radix {
+namespace heap {
 
 using std::cout;
 using std::endl;
@@ -51,7 +70,7 @@ RadixHeap::~RadixHeap() {
   delete[] u;
 }
 
-void RadixHeap::insert(int item, long k) {
+void RadixHeap::insert(int item, int64_t k) {
   RadixHeapNode *newNode = new RadixHeapNode;
   newNode->item = item;
   newNode->key = k;
@@ -64,11 +83,11 @@ void RadixHeap::insert(int item, long k) {
 #endif
 }
 
-void RadixHeap::decreaseKey(int item, long k) {
+void RadixHeap::decreaseKey(int item, int64_t k) {
   RadixHeapNode *node;
   node = nodes[item];
   removeNode(node);
-  node->key = k;
+  node->key = std::min(k, node->key);
   placeNode(node->bucket, node);
 #ifdef RADIXHEAP_DEBUG
   cout << "performed decrease-key (" << k << ") on item " << node->item << endl;
@@ -195,4 +214,7 @@ void RadixHeap::dump() const {
     i--;
   } while (i >= 0);
 }
+
+}  // namespace heap
+}  // namespace radix
 }  // namespace datastructures

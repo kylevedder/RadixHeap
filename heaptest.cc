@@ -1,3 +1,20 @@
+// Copyright 2017 Kyle Vedder (kvedder@umass.edu)
+// College of Information and Computer Sciences,
+// University of Massachusetts Amherst
+//
+// This software is free: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License Version 3,
+// as published by the Free Software Foundation.
+//
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// Version 3 in the file COPYING that came with this distribution.
+// If not, see <http://www.gnu.org/licenses/>.
+// ========================================================================
 #include <stdlib.h>
 #include <time.h>
 #include <algorithm>
@@ -6,6 +23,7 @@
 #include <vector>
 
 #include "radixheap.h"
+#include "radixqueue.h"
 
 static constexpr float kIntMaxF = 2147483647;
 
@@ -24,6 +42,12 @@ struct NonTrivialType {
   bool operator<(const NonTrivialType& other) const {
     return data < other.data;
   }
+
+  bool operator==(const NonTrivialType& other) const {
+    return data == other.data;
+  }
+
+  size_t operator()() const { return static_cast<size_t>(data); }
 };
 
 struct STLQueueDataHolder {
@@ -42,10 +66,22 @@ struct STLQueueDataHolder {
 int main() {
   srand(time(nullptr));
   constexpr int n = 100000;
-  constexpr int MaxKey = 500000;
+  constexpr int kMaxKey = 500000;
   // Must be a power of two to prevent floating point error.
   constexpr float kKeyScaler = 128.0f;
-  datastructures::RadixHeap heap(n, MaxKey);
+  datastructures::radix::queue::RadixQueue<NonTrivialType> queue(n, kMaxKey);
+  queue.Push({0.0f}, 200);
+  queue.Push({0.0f}, 100);
+  queue.Push({1.0f}, 150);
+  const NonTrivialType first = queue.Pop();
+  std::cout << "First: " << first.data << '\n';
+  const NonTrivialType second = queue.Pop();
+  std::cout << "Second: " << second.data << '\n';
+  if (!queue.Empty()) {
+    std::cerr << "Not correct count!\n";
+  }
+
+  datastructures::radix::heap::RadixHeap heap(n, kMaxKey);
   std::priority_queue<STLQueueDataHolder, std::vector<STLQueueDataHolder>>
       stl_queue;
 
@@ -53,7 +89,7 @@ int main() {
   std::vector<NonTrivialType> non_trivial_types;
   for (size_t i = 0; i < n / 2; ++i) {
     const float rand_f =
-        floor(static_cast<float>(rand()) / kIntMaxF * MaxKey) / kKeyScaler;
+        floor(static_cast<float>(rand()) / kIntMaxF * kMaxKey) / kKeyScaler;
     // Ensure that duplicates can be properly handled.
     non_trivial_types.push_back({rand_f});
     non_trivial_types.push_back({rand_f});
@@ -63,8 +99,9 @@ int main() {
   const auto custom_push_start = GetMonotonicTime();
   for (size_t i = 0; i < non_trivial_types.size(); ++i) {
     // Key is the index in the unsorted vector, value is the float converted to
-    // a long.
-    heap.insert(i, static_cast<long>(non_trivial_types[i].data * kKeyScaler));
+    // a int64_t.
+    heap.insert(i,
+                static_cast<int64_t>(non_trivial_types[i].data * kKeyScaler));
   }
   const auto custom_push_end = GetMonotonicTime();
   std::cout << "Custom push time delta: "
