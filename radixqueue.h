@@ -93,14 +93,6 @@ class RadixQueue {
   }
 
   bool Empty() {
-    if (kDebug) {
-      if ((key_store_.size() != frontier_set_.size()) ||
-          (key_store_.size() != radix_heap_.nItems())) {
-        std::cerr << "Improper sizing!!!";
-        exit(-1);
-      }
-    }
-
     return radix_heap_.nItems() <= 0;
   }
 };
